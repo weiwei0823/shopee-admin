@@ -1,8 +1,4 @@
-import {
-  createRouter,
-  // createWebHistory,
-  createWebHashHistory
-} from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 import Layout from '@/layout/index.vue'
 import nested from './modules/nested'
@@ -103,7 +99,7 @@ export const asyncRoutes = [
         path : 'index',
         component : () => import( '@/views/icons/index.vue' ),
         name : 'Icons',
-        meta : { title : '虾皮', icon : 'image', noCache : true }
+        meta : { title : '虾皮', img : 'shopee/logo.jpg', noCache : true }
       }
     ]
   },

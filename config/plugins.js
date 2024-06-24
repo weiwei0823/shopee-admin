@@ -16,9 +16,9 @@ export function composePlugins( command, VITE_LEGACY ) {
     DefineOptions(),
     vueJsx(),
     svgBuilder( './src/icons/svg/' ),
-    eslintPlugin({
-      include: ['src/**/*.js', 'src/**/*.vue', 'src/*.js', 'src/*.vue']
-    }),
+    // eslintPlugin({
+    //   include: ['src/**/*.js', 'src/**/*.vue', 'src/*.js', 'src/*.vue']
+    // }),
     // https://www.npmjs.com/package/@vitejs/plugin-legacy
     VITE_LEGACY
       ? legacy( {
@@ -54,7 +54,7 @@ export function composePlugins( command, VITE_LEGACY ) {
         filename: "report.html"
       } )
       : null,
-  
+
     viteMockServe( {
       mockPath: 'mock',
       watchFiles : true,

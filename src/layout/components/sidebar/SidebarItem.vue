@@ -11,9 +11,14 @@
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !props.isNest }">
           <svg-icon
             class-name="menu-icons"
-            v-if="onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)"
+            v-if="onlyOneChild?.meta?.icon || props?.item?.meta?.icon"
             :icon-class="onlyOneChild.meta.icon || (props.item.meta && props.item.meta.icon)"
           />
+          <image v-else-if="onlyOneChild?.meta?.img || props?.item?.meta?.img"
+                 class-name="menu-icons menu-image"
+                 :src="getMenuImg(onlyOneChild?.meta?.img || props?.item?.meta?.img)"
+                 alt="">
+          </image>
           <template #title>
             <span> {{ onlyOneChild.meta.title }} </span>
           </template>
@@ -84,6 +89,10 @@ function hasOneShowingChild( children = [], parent ) {
     return true
   }
   return false
+}
+
+function getMenuImg( url ) {
+  return new URL( `@/assets/${url}`, import.meta.url ).href
 }
 
 const resolvePath = routePath => {
