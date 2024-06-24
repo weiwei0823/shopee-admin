@@ -92,6 +92,22 @@ export const asyncRoutes = [
     ]
   },
   {
+    path : '/shopee',
+    name : 'shopee',
+    component : Layout,
+    meta : {
+      title : 'shopee'
+    },
+    children : [
+      {
+        path : 'index',
+        component : () => import( '@/views/icons/index.vue' ),
+        name : 'Icons',
+        meta : { title : '虾皮', icon : 'image', noCache : true }
+      }
+    ]
+  },
+  {
     path : '/icon',
     name : 'Icon',
     component : Layout,
