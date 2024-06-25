@@ -24,15 +24,17 @@
           <!--店铺-->
         </div>
         <el-divider content-position="left">店铺列表</el-divider>
-        <el-table ref="tableRef"
-                  v-loading="listLoading"
-                  :key="`${categoryObj.current}_${pageObj.index}`"
-                  :data="shopObj.pageList"
-                  border
-                  fit
-                  highlight-current-row
-                  class="shopTable"
-                  style="width: 100%">
+        <el-table
+          ref="tableRef"
+          v-loading="listLoading"
+          :key="`${categoryObj.current}_${pageObj.index}`"
+          :data="shopObj.pageList"
+          border
+          fit
+          highlight-current-row
+          class="shopTable"
+          style="width: 100%"
+        >
           <!--名称-->
           <el-table-column align="center" label="名称" min-width="200">
             <template #default="{ row }">
@@ -79,14 +81,14 @@
         </el-table>
         <el-divider></el-divider>
         <el-pagination
-            v-model:current-page="pageObj.current"
-            v-model:page-size="pageObj.size"
-            :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
-            :size="pageObj.size"
-            layout="prev, pager, next, jumper, sizes, total"
-            :total="shopObj.list?.length || 0"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
+          v-model:current-page="pageObj.current"
+          v-model:page-size="pageObj.size"
+          :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
+          :size="pageObj.size"
+          layout="prev, pager, next, jumper, sizes, total"
+          :total="shopObj.list?.length || 0"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
     </template>
