@@ -24,16 +24,15 @@
           <!--店铺-->
         </div>
         <el-divider content-position="left">店铺列表</el-divider>
-        <el-table
-          v-loading="listLoading"
-          :key="`${categoryObj.current}_${pageObj.index}`"
-          :data="shopObj.pageList"
-          border
-          fit
-          highlight-current-row
-          class="shopTable"
-          style="width: 100%"
-        >
+        <el-table ref="tableRef"
+                  v-loading="listLoading"
+                  :key="`${categoryObj.current}_${pageObj.index}`"
+                  :data="shopObj.pageList"
+                  border
+                  fit
+                  highlight-current-row
+                  class="shopTable"
+                  style="width: 100%">
           <!--名称-->
           <el-table-column align="center" label="名称" min-width="200">
             <template #default="{ row }">
@@ -94,9 +93,11 @@
   </yu-layout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, ref } from 'vue'
-import YuLayout from '@/components/YuLayout'
+import YuLayout from '@/components/YuLayout/index'
+
+const tableRef = ref( null )
 
 const listLoading = ref( true )
 // 国家
@@ -179,12 +180,16 @@ const getCategoryList = () => {
 
 // 获取商品类别列表
 const getShopList = () => {
+  // 初始化
   shopObj.list = []
   shopObj.pageList = []
   shopObj.current = ''
+  // console.log( tableRef, 'aaaaaaa' )
+  // tableRef.value.bodyWrapper.scrollTop = 0
+  // 获取数据
   listLoading.value = true
   shopObj.list = shopObj.all[categoryObj.current]
-  shopObj.pageList = shopObj.list?.slice( ( pageObj?.current - 1 ) * pageObj?.size, ( pageObj?.current ) * pageObj?.size )
+  shopObj.pageList = shopObj.list?.slice( ( pageObj?.current - 1 ) * pageObj?.size, pageObj?.current * pageObj?.size )
   listLoading.value = false
 }
 
@@ -197,12 +202,12 @@ const changeCategory = () => {
   getShopList()
 }
 
-const handleSizeChange = ( val ) => {
+const handleSizeChange = val => {
   pageObj.size = val
   pageObj.current = 1
   getShopList()
 }
-const handleCurrentChange = ( val ) => {
+const handleCurrentChange = val => {
   getShopList()
 }
 getCategoryList()
