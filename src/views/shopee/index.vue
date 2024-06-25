@@ -24,14 +24,16 @@
           <!--店铺-->
         </div>
         <el-divider content-position="left">店铺列表</el-divider>
-        <el-table v-loading="listLoading"
-                  :key="`${categoryObj.current}_${pageObj.index}`"
-                  :data="shopObj.list"
-                  border
-                  fit
-                  highlight-current-row
-                  class="shopTable"
-                  style="width: 100%">
+        <el-table
+          v-loading="listLoading"
+          :key="`${categoryObj.current}_${pageObj.index}`"
+          :data="shopObj.pageList"
+          border
+          fit
+          highlight-current-row
+          class="shopTable"
+          style="width: 100%"
+        >
           <!--名称-->
           <el-table-column align="center" label="名称" min-width="200">
             <template #default="{ row }">
@@ -71,13 +73,22 @@
           <el-table-column label="图片" min-width="200">
             <template #default="{ row }">
               <span class="shopTable-column">
-                <img class="shopTable-column-img"
-                     :src="row.main_image ? row.main_image[0] : ''"
-                     alt=""/>
+                <img class="shopTable-column-img" :src="row.main_image ? row.main_image[0] : ''" alt="" />
               </span>
             </template>
           </el-table-column>
         </el-table>
+        <el-divider></el-divider>
+        <el-pagination
+            v-model:current-page="pageObj.current"
+            v-model:page-size="pageObj.size"
+            :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
+            :size="pageObj.size"
+            layout="prev, pager, next, jumper, sizes, total"
+            :total="shopObj.list?.length || 0"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+        />
       </div>
     </template>
   </yu-layout>
@@ -126,7 +137,7 @@ const shopObj = reactive( {
 
 // 页码配置
 const pageObj = reactive( {
-  index : 1,
+  current : 1,
   size : 20
 } )
 // 获取商品类别列表
@@ -173,9 +184,7 @@ const getShopList = () => {
   shopObj.current = ''
   listLoading.value = true
   shopObj.list = shopObj.all[categoryObj.current]
-  shopObj.pageList = shopObj.list?.filter( ( item, index ) => {
-    return +index >= ( pageObj?.index - 1 ) * pageObj?.size && +index < pageObj?.index * pageObj?.size
-  } )
+  shopObj.pageList = shopObj.list?.slice( ( pageObj?.current - 1 ) * pageObj?.size, ( pageObj?.current ) * pageObj?.size )
   listLoading.value = false
 }
 
@@ -184,7 +193,16 @@ const changeCountry = () => {
   getCategoryList()
 }
 const changeCategory = () => {
-  pageObj.index = 1
+  pageObj.current = 1
+  getShopList()
+}
+
+const handleSizeChange = ( val ) => {
+  pageObj.size = val
+  pageObj.current = 1
+  getShopList()
+}
+const handleCurrentChange = ( val ) => {
   getShopList()
 }
 getCategoryList()
