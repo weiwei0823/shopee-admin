@@ -97,7 +97,7 @@ export const asyncRoutes = [
     },
     children : [
       {
-        path : 'shopee',
+        path : 'index',
         component : () => import( '@/views/shopee/index.vue' ),
         name : 'shopee',
         meta : { title : '虾皮', img : logoShopee, noCache : true }

@@ -2,214 +2,158 @@
   <yu-layout title="虾皮">
     <template #body>
       <div class="section-container">
-        <el-divider content-position="left">Element Plus Table</el-divider>
-        <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-          <el-table-column align="center" label="ID" width="65">
+        <!--筛选区域-->
+        <el-divider content-position="left">筛选区域</el-divider>
+        <div class="flex flex-wrap gap-4 items-center">
+          <!--国家-->
+          <el-select-v2
+            v-model="countryObj.current"
+            :options="countryObj.list"
+            placeholder="选择国家"
+            style="width: 240px"
+            @change="changeCountry"
+          />
+          <!--商品类别-->
+          <el-select-v2
+            v-model="categoryObj.current"
+            :options="categoryObj.list"
+            placeholder="选择商品分类"
+            style="width: 240px"
+            @change="changeCategory"
+          />
+          <!--店铺-->
+        </div>
+        <el-divider content-position="left">店铺列表</el-divider>
+        <el-table v-loading="listLoading" :data="shopObj.list" border fit highlight-current-row style="width: 100%">
+          <el-table-column align="center" label="名称" width="100">
             <template #default="{ row }">
-              <span>{{ row.id }}</span>
+              <span>{{ row.name }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column width="180px" align="center" label="Date">
+          <el-table-column width="180px" align="center" label="描述">
             <template #default="{ row }">
-              <span>{{ parseTime(row.timestamp, '{y}-{m}-{d} {h}:{i}') }}</span>
+              <span>{{ row.description }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column width="110px" align="center" label="Author">
+          <el-table-column width="110px" align="center" label="店铺地址">
             <template #default="{ row }">
-              <span>{{ row.author }}</span>
+              <span>{{ row.store_place }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column width="100px" label="Importance">
+          <el-table-column width="100px" label="图片">
             <template #default="{ row }">
-              <svg-icon v-for="n in row.importance" :key="n" icon-class="star" class="icon-star" />
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="Readings" width="95">
-            <template #default="{ row }">
-              <span>{{ row.pageviews }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column class-name="status-col" label="Status" width="110">
-            <template #default="{ row }">
-              <el-tag :type="statusFilter(row.status)">{{ row.status }}</el-tag>
-            </template>
-          </el-table-column>
-
-          <el-table-column min-width="300px" label="Title">
-            <template #default="{ row }">
-              <template v-if="row.edit">
-                <el-input v-model="row.title" class="edit-input" size="small" />
-                <el-button class="cancel-btn" size="small" type="warning" @click="cancelEdit(row)"> cancel </el-button>
-              </template>
-              <span v-else>{{ row.title }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="Actions" width="120">
-            <template #default="{ row }">
-              <vxe-button
-                size="mini"
-                status="success"
-                v-if="row.edit"
-                icon="el-icon-circle-check-outline"
-                @click="confirmEdit(row)"
-                >Ok</vxe-button
-              >
-
-              <vxe-button
-                size="mini"
-                status="primary"
-                v-else
-                icon="el-icon-circle-check-outline"
-                @click="row.edit = !row.edit"
-                >Edit</vxe-button
-              >
+              <span>
+                <img :src="row.main_image[0]" alt="" />
+              </span>
             </template>
           </el-table-column>
         </el-table>
-
-        <el-divider content-position="left">Vxe Table</el-divider>
-        <vxe-table round border :data="list" :loading="listLoading" style="width: 100%">
-          <vxe-column align="center" field="id" title="ID" width="65" />
-
-          <vxe-column align="center" field="timestamp" title="Date" width="180px">
-            <template #default="{ row }">
-              <span>{{ parseTime(row.timestamp, '{y}-{m}-{d} {h}:{i}') }}</span>
-            </template>
-          </vxe-column>
-
-          <vxe-column align="center" field="author" title="Author" width="110px" />
-
-          <vxe-column width="100px" title="Importance">
-            <template #default="{ row }">
-              <svg-icon v-for="n in row.importance" :key="n" icon-class="star" class="icon-star" />
-            </template>
-          </vxe-column>
-
-          <vxe-column align="center" title="Readings" width="95">
-            <template #default="{ row }">
-              <span>{{ row.pageviews }}</span>
-            </template>
-          </vxe-column>
-
-          <vxe-column class-name="status-col" label="Status" width="110">
-            <template #default="{ row }">
-              <el-tag :type="statusFilter(row.status)">{{ row.status }}</el-tag>
-            </template>
-          </vxe-column>
-
-          <vxe-column min-width="300px" title="Title">
-            <template #default="{ row }">
-              <template v-if="row.edit">
-                <el-input v-model="row.title" class="edit-input" size="small" />
-                <el-button class="cancel-btn" size="small" type="warning" @click="cancelEdit(row)"> cancel </el-button>
-              </template>
-              <span v-else>{{ row.title }}</span>
-            </template>
-          </vxe-column>
-
-          <vxe-column align="center" title="Actions" width="120">
-            <template #default="{ row }">
-              <vxe-button
-                size="mini"
-                status="success"
-                v-if="row.edit"
-                icon="el-icon-circle-check-outline"
-                @click="confirmEdit(row)"
-                >Ok</vxe-button
-              >
-
-              <vxe-button
-                size="mini"
-                status="primary"
-                v-else
-                icon="el-icon-circle-check-outline"
-                @click="row.edit = !row.edit"
-                >Edit</vxe-button
-              >
-            </template>
-          </vxe-column>
-        </vxe-table>
       </div>
     </template>
   </yu-layout>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { parseTime } from '@/utils'
-import { getArticle } from '@/api/article'
+import { reactive, ref } from 'vue'
 import YuLayout from '@/components/YuLayout'
-import { ElMessage } from 'element-plus'
 
-const list = ref( null )
 const listLoading = ref( true )
-const listQuery = reactive( {
-  page : 1,
-  limit : 10
+// 国家
+const countryObj = reactive( {
+  list : [
+    {
+      value : 'my',
+      label : '马来西亚'
+    },
+    {
+      value : 'ph',
+      label : '菲律宾'
+    },
+    {
+      value : 'vn',
+      label : '越南'
+    },
+    {
+      value : 'cl',
+      label : '智利'
+    }
+  ],
+  current : 'my'
 } )
 
-const statusFilter = status => {
-  const statusMap = {
-    published : 'success',
-    draft : 'info',
-    deleted : 'danger'
+// 商品分类
+const categoryObj = reactive( {
+  list : [],
+  fileList : [],
+  current : '',
+  currentFile : ''
+} )
+// 店铺列表
+const shopObj = reactive( {
+  list : [],
+  current : ''
+} )
+
+// 页码配置
+const pageObj = reactive( {
+  index : 1,
+  size : 20
+} )
+// 获取商品类别列表
+const getCategoryList = () => {
+  listLoading.value = true
+  let modulesFiles = []
+  switch ( countryObj.current ) {
+    case 'cl':
+      modulesFiles = import.meta.globEager( `@/datas/polymerization_products/products_cl/*.json` )
+      break
+    case 'my':
+      modulesFiles = import.meta.globEager( `@/datas/polymerization_products/products_my/*.json` )
+      break
+    case 'ph':
+      modulesFiles = import.meta.globEager( `@/datas/polymerization_products/products_ph/*.json` )
+      break
+    case 'vn':
+      modulesFiles = import.meta.globEager( `@/datas/polymerization_products/products_vn/*.json` )
+      break
+    default:
+      return
   }
-  return statusMap[status]
+  // 获取商品分类信息
+  Object.keys( modulesFiles ).forEach( item => {
+    categoryObj.fileList.push( modulesFiles[item]?.default || [] )
+    const tempStr = RegExp( `(?<=products_${countryObj.current}\/).+?(?=\\.json)` ).exec( item )[0]
+    categoryObj.list.push( {
+      value : tempStr,
+      label : tempStr
+    } )
+  } )
+  categoryObj.currentFile = categoryObj.fileList[0]
+  categoryObj.current = categoryObj.list[0]?.value
+  getShopList()
+  listLoading.value = false
 }
 
-const getList = async() => {
+// 获取商品类别列表
+const getShopList = () => {
   listLoading.value = true
-  const { data } = await getArticle( listQuery )
-  const items = data.items
-
-  list.value = items.map( v => {
-    return {
-      ...v,
-      edit : false,
-      originalTitle : v.title
-    }
+  shopObj.list = categoryObj.fileList?.filter( ( item, index ) => {
+    return +index >= ( pageObj?.index - 1 ) * pageObj?.size && +index < pageObj?.index * pageObj?.size
   } )
   listLoading.value = false
 }
 
-const cancelEdit = row => {
-  row.title = row.originalTitle
-  row.edit = false
-  ElMessage( {
-    message : 'The title has been restored to the original value',
-    type : 'warning'
-  } )
+const changeCountry = value => {
+  getCategoryList()
 }
-
-const confirmEdit = row => {
-  row.edit = false
-  row.originalTitle = row.title
-  ElMessage( {
-    message : 'The title has been edited',
-    type : 'success'
-  } )
-}
-
-getList()
-
+const changeCategory = value => {}
+getCategoryList()
 defineOptions( {
-  name : 'EditTable'
+  name : 'shopee'
 } )
 </script>
 
-<style scoped>
-.edit-input {
-  padding-right: 100px;
-}
-.cancel-btn {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-}
-</style>
+<style lang="scss" scoped></style>
