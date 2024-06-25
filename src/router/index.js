@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Layout from '@/layout/index.vue'
 import nested from './modules/nested'
 import customComponents from './modules/customComponents'
+import logoShopee from '@/assets/shopee/logo.jpg'
 
 // 配置路由信息
 export const constantRoutes = [
@@ -96,10 +97,10 @@ export const asyncRoutes = [
     },
     children : [
       {
-        path : 'index',
-        component : () => import( '@/views/icons/index.vue' ),
-        name : 'Icons',
-        meta : { title : '虾皮', img : 'shopee/logo.jpg', noCache : true }
+        path : 'shopee',
+        component : () => import( '@/views/shopee/index.vue' ),
+        name : 'shopee',
+        meta : { title : '虾皮', img : logoShopee, noCache : true }
       }
     ]
   },
