@@ -3,8 +3,8 @@
     <template #body>
       <div class="shopee">
         <!--筛选区域-->
-        <el-divider content-position="left">筛选区域</el-divider>
-        <div class="flex flex-wrap gap-4 items-center">
+        <el-divider class="shopee-condition" content-position="left">
+          <span class="shopee-condition-title">筛选区域</span>
           <!--国家-->
           <el-select-v2
             v-model="countryObj.current"
@@ -21,75 +21,246 @@
             style="width: 240px"
             @change="changeCategory"
           />
-          <!--店铺-->
-        </div>
-        <el-divider content-position="left">店铺列表</el-divider>
+        </el-divider>
+        <div class="flex flex-wrap gap-4 items-center"></div>
+        <el-divider content-position="right">
+          <el-pagination
+            v-model:current-page="pageObj.current"
+            v-model:page-size="pageObj.size"
+            :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
+            :size="pageObj.size"
+            layout="prev, pager, next, jumper, sizes, total"
+            :total="shopObj.list?.length || 0"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </el-divider>
+        <!--店铺表格-->
         <el-table
           ref="tableRef"
           v-loading="listLoading"
-          :key="`${categoryObj.current}_${pageObj.index}`"
+          :key="`${categoryObj.current}_${pageObj.current}`"
           :data="shopObj.pageList"
           border
           fit
           highlight-current-row
           class="shopTable"
-          style="width: 100%"
         >
-          <!--名称-->
-          <el-table-column align="center" label="名称" min-width="200">
+          <!--编号-->
+          <el-table-column align="center" label="编号" min-width="60" fixed>
+            <template #default="{ row, $index }">
+              <el-tooltip class="shopTable-tooltip" placement="top">
+                <span class="shopTable-cell">
+                  {{ pageObj.size * (pageObj.current - 1) + $index + 1 }}
+                </span>
+                <template #content>
+                  <div>
+                    <span class="shopTable-tooltip-title">编号:</span>
+                    <span>{{ pageObj.size * (pageObj.current - 1) + $index + 1 }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">商品ID:</span>
+                    <span>{{ row.product_id }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">商品创建时间:</span>
+                    <span>{{ getDate(row.ctime) }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">产品分类ID:</span>
+                    <span>{{ row.catid }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">店铺ID:</span>
+                    <span>{{ row.shop_id }}</span>
+                  </div>
+                </template>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <!--商品名称-->
+          <el-table-column align="center" label="商品名称" min-width="300">
             <template #default="{ row }">
               <el-tooltip placement="top">
-                <span class="shopTable-column">{{ row.name }}</span>
-                <template #content>
+                <span class="shopTable-cell shopTable-cell-name">
                   {{ row.name }}
+                </span>
+                <template #content>
+                  <div>
+                    <span class="shopTable-tooltip-title">商品名称:</span>
+                    <span>{{ row.name }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">商品描述:</span>
+                    <span>{{ row.description }}</span>
+                  </div>
                 </template>
               </el-tooltip>
             </template>
           </el-table-column>
           <!--价格-->
-          <el-table-column align="center" label="价格" min-width="200">
+          <el-table-column align="center" label="价格" min-width="100">
             <template #default="{ row }">
               <el-tooltip placement="top">
-                <span class="shopTable-column">{{ row.price }}</span>
+                <span class="shopTable-cell shopTable-cell-price">
+                  {{ row.price }}
+                </span>
                 <template #content>
-                  <div class="shopTable-column">最低价：{{ row.price_min }}</div>
-                  <div class="shopTable-column">最高价: {{ row.price_max }}</div>
+                  <div>
+                    <span class="shopTable-tooltip-title">价格:</span>
+                    <span>{{ row.price }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">折扣:</span>
+                    <span>{{ row.discount }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">最低价:</span>
+                    <span>{{ row.price_min }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">最高价:</span>
+                    <span>{{ row.price_max }}</span>
+                  </div>
                 </template>
               </el-tooltip>
             </template>
           </el-table-column>
-          <!--描述-->
-          <el-table-column align="center" label="描述" min-width="200">
+          <!--库存-->
+          <el-table-column align="center" label="库存" min-width="100">
             <template #default="{ row }">
-              <span class="shopTable-column">{{ row.description }}</span>
+              <el-tooltip placement="top">
+                <span class="shopTable-cell">
+                  {{ row.stock }}
+                </span>
+                <template #content>
+                  <div>
+                    <span class="shopTable-tooltip-title">库存:</span>
+                    <span>{{ row.stock }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">已售出:</span>
+                    <span>{{ row.sold }}</span>
+                  </div>
+                  <div>
+                    <span class="shopTable-tooltip-title">历史已售出:</span>
+                    <span>{{ row.historical_sold }}</span>
+                  </div>
+                </template>
+              </el-tooltip>
             </template>
           </el-table-column>
-          <!--店铺地址-->
-          <el-table-column align="center" label="店铺地址" min-width="200">
+          <!--品牌-->
+          <el-table-column align="center" label="品牌" min-width="100">
             <template #default="{ row }">
-              <span class="shopTable-column">{{ row.store_place }}</span>
+              <el-tooltip placement="top">
+                <span class="shopTable-cell">
+                  {{ row.brand }}
+                </span>
+                <template #content>
+                  <div>
+                    <span class="shopTable-tooltip-title">品牌:</span>
+                    <span>{{ row.brand }}</span>
+                  </div>
+                </template>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <!--评分-->
+          <el-table-column align="center" label="评分" min-width="100">
+            <template #default="{ row }">
+              <el-tooltip placement="top">
+                <span class="shopTable-cell">
+                  {{ getRate(row.comment_info) }}
+                </span>
+                <template #content>
+                  <div>共{{ row.comment_info?.comment_count || 0 }}人评分</div>
+                  <div>
+                    <span>
+                      <el-rate :model-value="1" disabled />
+                    </span>
+                    <span class="shopTable-tooltip-title">{{ row.comment_info?.one_star_count }}</span>
+                  </div>
+                  <div>
+                    <span>
+                      <el-rate :model-value="2" disabled />
+                    </span>
+                    <span class="shopTable-tooltip-title">{{ row.comment_info?.two_star_count }}</span>
+                  </div>
+                  <div>
+                    <span>
+                      <el-rate :model-value="3" disabled />
+                    </span>
+                    <span class="shopTable-tooltip-title">{{ row.comment_info?.three_star_count }}</span>
+                  </div>
+                  <div>
+                    <span>
+                      <el-rate :model-value="4" disabled />
+                    </span>
+                    <span class="shopTable-tooltip-title">{{ row.comment_info?.four_star_count }}</span>
+                  </div>
+                  <div>
+                    <span>
+                      <el-rate :model-value="5" disabled />
+                    </span>
+                    <span class="shopTable-tooltip-title">{{ row.comment_info?.five_star_count }}</span>
+                  </div>
+                </template>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <!--店铺信息-->
+          <el-table-column align="center" label="店铺信息" min-width="150">
+            <template #default="{ row }">
+              <span class="shopTable-cell">{{ row.store_place }}</span>
             </template>
           </el-table-column>
           <!--图片-->
-          <el-table-column label="图片" min-width="200">
+          <el-table-column align="center" label="图片" min-width="200">
             <template #default="{ row }">
-              <span class="shopTable-column">
-                <img class="shopTable-column-img" :src="row.main_image ? row.main_image[0] : ''" alt="" />
-              </span>
+              <el-carousel
+                v-if="row.main_image?.length"
+                height="100px"
+                motion-blur
+                class="shopTable-cell-carousel"
+                indicator-position="none"
+                :autoplay="false"
+              >
+                <el-carousel-item v-for="imgItem in row.main_image" :key="imgItem">
+                  <!--                  <el-image class="shopTable-cell-carousel-img"-->
+                  <!--                            :src="imgItem"-->
+                  <!--                            fit="cover"-->
+                  <!--                            :zoom-rate="1.2"-->
+                  <!--                            :max-scale="7"-->
+                  <!--                            :min-scale="0.2"-->
+                  <!--                            :preview-src-list="row.main_image"-->
+                  <!--                            :initial-index="0"-->
+                  <!--                            lazy/>-->
+                  <el-image class="shopTable-cell-carousel-img" :src="imgItem" fit="cover" lazy />
+                </el-carousel-item>
+              </el-carousel>
             </template>
           </el-table-column>
+          <!--操作-->
+          <el-table-column align="center" label="操作" min-width="200">
+<!--            <template #default="{ row }">-->
+<!--              <div>上架</div>-->
+<!--              <div>下架</div>-->
+<!--            </template>-->
+          </el-table-column>
         </el-table>
-        <el-divider></el-divider>
-        <el-pagination
-          v-model:current-page="pageObj.current"
-          v-model:page-size="pageObj.size"
-          :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
-          :size="pageObj.size"
-          layout="prev, pager, next, jumper, sizes, total"
-          :total="shopObj.list?.length || 0"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+        <el-divider content-position="right">
+          <el-pagination
+            v-model:current-page="pageObj.current"
+            v-model:page-size="pageObj.size"
+            :page-sizes="[10, 20, 50, 100, 200, 500, 1000]"
+            :size="pageObj.size"
+            layout="prev, pager, next, jumper, sizes, total"
+            :total="shopObj.list?.length || 0"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </el-divider>
       </div>
     </template>
   </yu-layout>
@@ -212,6 +383,28 @@ const handleSizeChange = val => {
 const handleCurrentChange = val => {
   getShopList()
 }
+// 获取评分
+const getRate = commentInfo => {
+  if ( +commentInfo?.comment_count ) {
+    return (
+      Math.round(
+        ( 100 *
+          ( ( +commentInfo?.one_star_count || 0 ) +
+            ( +commentInfo?.two_star_count || 0 ) * 2 +
+            ( +commentInfo?.three_star_count || 0 ) * 3 +
+            ( +commentInfo?.four_star_count || 0 ) * 4 +
+            ( +commentInfo?.five_star_count || 0 ) * 5 ) ) /
+          +commentInfo?.comment_count
+      ) / 100
+    )
+  } else {
+    return 0
+  }
+}
+// 获取日期
+const getDate = dateTime => {
+  return new Date( dateTime * 1000 )
+}
 getCategoryList()
 defineOptions( {
   name : 'shopee'
@@ -220,19 +413,52 @@ defineOptions( {
 
 <style lang="scss" scoped>
 .shopee {
+  &-container {
+    ::v-deep .header {
+      display: none;
+    }
+  }
+
+  &-condition {
+    &-title {
+      margin-right: 20px;
+    }
+  }
   .shopTable {
     width: 100%;
 
-    &-column {
+    &-cell {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
 
-      &-img {
-        height: 100px;
-        object-fit: contain;
+      &-name {
+        overflow: auto !important;
+        text-overflow: initial !important;
+        white-space: pre-wrap !important;
+      }
+
+      &-price {
+        font-size: 16px;
+        font-weight: bolder;
+        color: #101010;
       }
     }
+  }
+}
+
+::v-deep {
+  .shopTable-tooltip-title {
+    font-weight: bolder;
+    color: #4dd9d5;
+    margin-right: 5px;
+  }
+}
+
+::v-deep {
+  .shopTable-cell-carousel-img {
+    height: 100px;
+    object-fit: contain;
   }
 }
 </style>
