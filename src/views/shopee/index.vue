@@ -243,10 +243,10 @@
           </el-table-column>
           <!--操作-->
           <el-table-column align="center" label="操作" min-width="200">
-<!--            <template #default="{ row }">-->
-<!--              <div>上架</div>-->
-<!--              <div>下架</div>-->
-<!--            </template>-->
+            <!--            <template #default="{ row }">-->
+            <!--              <div>上架</div>-->
+            <!--              <div>下架</div>-->
+            <!--            </template>-->
           </el-table-column>
         </el-table>
         <el-divider content-position="right">
@@ -322,16 +322,16 @@ const getCategoryList = () => {
   let modulesFiles = []
   switch ( countryObj.current ) {
     case 'cl':
-      modulesFiles = import.meta.globEager( `@/datas/polymerization_products/products_cl/*.json` )
+      modulesFiles = import.meta.glob( `@/datas/polymerization_products/products_cl/*.json`, { eager : true } )
       break
     case 'my':
-      modulesFiles = import.meta.globEager( `@/datas/polymerization_products/products_my/*.json` )
+      modulesFiles = import.meta.glob( `@/datas/polymerization_products/products_my/*.json`, { eager : true } )
       break
     case 'ph':
-      modulesFiles = import.meta.globEager( `@/datas/polymerization_products/products_ph/*.json` )
+      modulesFiles = import.meta.glob( `@/datas/polymerization_products/products_ph/*.json`, { eager : true } )
       break
     case 'vn':
-      modulesFiles = import.meta.globEager( `@/datas/polymerization_products/products_vn/*.json` )
+      modulesFiles = import.meta.glob( `@/datas/polymerization_products/products_vn/*.json`, { eager : true } )
       break
     default:
       return
