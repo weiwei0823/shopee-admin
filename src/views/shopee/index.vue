@@ -47,7 +47,7 @@
           class="shopTable"
         >
           <!--编号-->
-          <el-table-column align="center" label="编号" min-width="60" fixed>
+          <el-table-column align="center" label="编号" min-width="50" fixed>
             <template #default="{ row, $index }">
               <el-tooltip class="shopTable-tooltip" placement="top">
                 <span class="shopTable-cell">
@@ -99,15 +99,15 @@
             </template>
           </el-table-column>
           <!--价格-->
-          <el-table-column align="center" label="价格" min-width="100">
+          <el-table-column align="center" label="价格" min-width="80">
             <template #default="{ row }">
               <el-tooltip placement="top">
                 <span class="shopTable-cell shopTable-cell-price">
-                  {{ row.price }}
+                  {{ row.discount ? Math.round(row.price * (1 - (+row.discount?.replace("%", "") / 100)) * 1000) / 1000 : row.price }}
                 </span>
                 <template #content>
                   <div>
-                    <span class="shopTable-tooltip-title">价格:</span>
+                    <span class="shopTable-tooltip-title">原价:</span>
                     <span>{{ row.price }}</span>
                   </div>
                   <div>
@@ -127,7 +127,7 @@
             </template>
           </el-table-column>
           <!--库存-->
-          <el-table-column align="center" label="库存" min-width="100">
+          <el-table-column align="center" label="库存" min-width="80">
             <template #default="{ row }">
               <el-tooltip placement="top">
                 <span class="shopTable-cell">
@@ -151,7 +151,7 @@
             </template>
           </el-table-column>
           <!--品牌-->
-          <el-table-column align="center" label="品牌" min-width="100">
+          <el-table-column align="center" label="品牌" min-width="80">
             <template #default="{ row }">
               <el-tooltip placement="top">
                 <span class="shopTable-cell">
@@ -167,7 +167,7 @@
             </template>
           </el-table-column>
           <!--评分-->
-          <el-table-column align="center" label="评分" min-width="100">
+          <el-table-column align="center" label="评分" min-width="50">
             <template #default="{ row }">
               <el-tooltip placement="top">
                 <span class="shopTable-cell">
@@ -209,22 +209,16 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <!--店铺信息-->
-          <el-table-column align="center" label="店铺信息" min-width="150">
-            <template #default="{ row }">
-              <span class="shopTable-cell">{{ row.store_place }}</span>
-            </template>
-          </el-table-column>
           <!--图片-->
-          <el-table-column align="center" label="图片" min-width="200">
+          <el-table-column align="center" label="图片" min-width="125">
             <template #default="{ row }">
               <el-carousel
-                v-if="row.main_image?.length"
-                height="100px"
-                motion-blur
-                class="shopTable-cell-carousel"
-                indicator-position="none"
-                :autoplay="false"
+                  v-if="row.main_image?.length"
+                  height="100px"
+                  motion-blur
+                  class="shopTable-cell-carousel"
+                  indicator-position="none"
+                  :autoplay="false"
               >
                 <el-carousel-item v-for="imgItem in row.main_image" :key="imgItem">
                   <!--                  <el-image class="shopTable-cell-carousel-img"-->
@@ -241,8 +235,94 @@
               </el-carousel>
             </template>
           </el-table-column>
+          <!--规格-->
+          <el-table-column align="center" label="规格型号" min-width="125">
+            <template #default="{ row, $index }">
+              <div class="shopTable-cell" v-if="shopObj.list[$index]?.attributes?.name">
+                <el-image class="shopTable-cell-img"
+                          :src="row?.store_info?.store_logo_url"
+                          fit="cover"/>
+                <el-select
+                    :value="shopObj.list[$index]?.attributes?.options[shopObj.list[$index]?.attributes?.current || 0]"
+                    placeholder="Select"
+                    size="large"
+                    style="width: 240px"
+                >
+                  <el-option
+                      v-for="item in row?.attributes?.options"
+                      :key="item"
+                      :label="item"
+                      :value="item"
+                  />
+                </el-select>
+              </div>
+            </template>
+          </el-table-column>
+          <!--店铺信息-->
+          <el-table-column align="center" label="店铺信息" min-width="125">
+            <template #default="{ row }">
+              <div>
+                <el-image class="shopTable-cell-img"
+                          :src="row?.store_info?.store_logo_url"
+                          fit="cover"/>
+              </div>
+              <div>
+                <el-tooltip placement="top">
+                  <span class="shopTable-cell">
+                    {{ row?.store_info?.store_name }}
+                  </span>
+                  <template #content>
+                      <div>
+                        <span class="shopTable-tooltip-title">店铺名称:</span>
+                        <span>{{ row?.store_info?.store_name }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">店铺商品数:</span>
+                        <span>{{ row?.store_info?.item_count }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">粉丝:</span>
+                        <span>{{ row?.store_info?.follower_count }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">官方店铺:</span>
+                        <span>{{ row?.store_info?.is_official_shop ? "是" : "否" }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">店铺评分:</span>
+                        <span>{{ row?.store_info?.rating_star }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">聊天回应率:</span>
+                        <span>{{ row?.store_info?.response_rate }}%</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">好评:</span>
+                        <span>{{ row?.store_info?.rating_good }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">一般:</span>
+                        <span>{{ row?.store_info?.rating_normal }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">差评:</span>
+                        <span>{{ row?.store_info?.rating_bad }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">创建时间:</span>
+                        <span>{{ getDate(row?.store_info?.store_create_time) }}</span>
+                      </div>
+                      <div>
+                        <span class="shopTable-tooltip-title">店铺地址:</span>
+                        <span>{{ row?.store_info?.store_place || row?.store_place}}</span>
+                      </div>
+                    </template>
+                </el-tooltip>
+              </div>
+            </template>
+          </el-table-column>
           <!--操作-->
-          <el-table-column align="center" label="操作" min-width="200">
+          <el-table-column align="center" label="操作" min-width="150">
             <!--            <template #default="{ row }">-->
             <!--              <div>上架</div>-->
             <!--              <div>下架</div>-->
@@ -401,9 +481,17 @@ const getRate = commentInfo => {
     return 0
   }
 }
+const getDateNum = ( num ) => {
+  if ( +num >= 10 ) {
+    return `${num}`
+  } else if ( +num >= 0 ) {
+    return `0${num}`
+  }
+}
 // 获取日期
 const getDate = dateTime => {
-  return new Date( dateTime * 1000 )
+  const tempDate = new Date( dateTime * 1000 )
+  return `${tempDate.getFullYear()}/${getDateNum( tempDate.getMonth() )}/${getDateNum( tempDate.getDate() )} ${getDateNum( tempDate.getHours() )}:${getDateNum( tempDate.getMinutes() )}:${getDateNum( tempDate.getSeconds() )}`
 }
 getCategoryList()
 defineOptions( {
@@ -442,6 +530,11 @@ defineOptions( {
         font-size: 16px;
         font-weight: bolder;
         color: #101010;
+      }
+
+      &-img {
+        height: 100px;
+        object-fit: contain;
       }
     }
   }
