@@ -241,21 +241,23 @@
           <el-table-column align="center" label="规格型号" min-width="125">
             <template #default="{ row }">
               <div class="shopTable-cell">
-                <el-image v-if="row.attributes[row.attributeCurrent]?.images?.length"
-                          class="shopTable-cell-img"
-                          :src="row.attributes[row.attributeCurrent]?.selectorCurrentImg"
-                          fit="cover"
+                <el-image
+                  v-if="row.attributes[row.attributeCurrent]?.images?.length"
+                  class="shopTable-cell-img"
+                  :src="row.attributes[row.attributeCurrent]?.selectorCurrentImg"
+                  fit="cover"
                 />
                 <div v-else>
-                  {{ "暂无规格" }}
+                  {{ '暂无规格' }}
                 </div>
                 <div v-for="(attributeItem, attributeIndex) in row.attributes" :key="attributeItem">
-                  <el-select v-if="attributeItem?.images?.length"
-                             v-model="attributeItem.selectorCurrent"
-                             placeholder="Select"
-                             size="small"
-                             class="shopTable-cell-select"
-                             @change="(value) => handleAttributeSelectChange(row, attributeIndex, value)"
+                  <el-select
+                    v-if="attributeItem?.images?.length"
+                    v-model="attributeItem.selectorCurrent"
+                    placeholder="Select"
+                    size="small"
+                    class="shopTable-cell-select"
+                    @change="value => handleAttributeSelectChange(row, attributeIndex, value)"
                   >
                     <el-option
                       v-for="attributeItemOptionItem in attributeItem?.options"
@@ -337,18 +339,10 @@
             <template #default="{ row }">
               <div class="shopTable-cell-oper">
                 <div class="shopTable-cell-oper-row">
-                  <el-button type="success"
-                             round
-                             @click="() => handleBtnAvailable(row)"
-                  >上架
-                  </el-button>
+                  <el-button type="success" round @click="() => handleBtnAvailable(row)">上架 </el-button>
                 </div>
                 <div class="shopTable-cell-oper-row">
-                  <el-button type="warning"
-                             round
-                             @click="() => handleBtnRemove(row)"
-                  >下架
-                  </el-button>
+                  <el-button type="warning" round @click="() => handleBtnRemove(row)">下架 </el-button>
                 </div>
               </div>
             </template>
@@ -372,7 +366,7 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from 'vue'
+import { reactive, ref } from 'vue'
 import YuLayout from '@/components/YuLayout/index'
 
 const tableRef = ref( null )
@@ -471,7 +465,7 @@ const getShopList = () => {
     if ( item?.attributes?.length ) {
       item.attributeCurrent = 0
       item?.attributes?.forEach( attributeItem => {
-        if (attributeItem?.name && attributeItem?.images?.length) {
+        if ( attributeItem?.name && attributeItem?.images?.length ) {
           attributeItem.selectorCurrent = attributeItem?.options[0]
           attributeItem.selectorCurrentImg = attributeItem?.images?.length ? attributeItem?.images[0] : ''
         }
@@ -491,15 +485,15 @@ const changeCategory = () => {
   pageObj.current = 1
   getShopList()
 }
-const handleImageCarouselChange = (row, current, last) => {
+const handleImageCarouselChange = ( row, current, last ) => {
   row.mainImageCurrent = +current || 0
 }
-const handleAttributeSelectChange = (row, selectIndex, value) => {
+const handleAttributeSelectChange = ( row, selectIndex, value ) => {
   row.attributeCurrent = +selectIndex || 0
   const attributeItem = row.attributes[row.attributeCurrent]
-  const tempIndex = attributeItem?.options?.findIndex(option => option === value)
+  const tempIndex = attributeItem?.options?.findIndex( option => option === value )
   attributeItem.selectorCurrentImg = ''
-  if (tempIndex > -1 && attributeItem?.images?.length) {
+  if ( tempIndex > -1 && attributeItem?.images?.length ) {
     attributeItem.selectorCurrentImg = attributeItem?.images[tempIndex]
   }
 }
@@ -511,11 +505,11 @@ const handleSizeChange = val => {
 const handleCurrentChange = val => {
   getShopList()
 }
-const handleBtnAvailable = (row) => {
-  console.log(row, '上架')
+const handleBtnAvailable = row => {
+  console.log( row, '上架' )
 }
-const handleBtnRemove = (row) => {
-  console.log(row, '下架')
+const handleBtnRemove = row => {
+  console.log( row, '下架' )
 }
 // 获取评分
 const getRate = commentInfo => {
