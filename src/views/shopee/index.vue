@@ -223,7 +223,7 @@
                 class="shopTable-cell-carousel"
                 indicator-position="none"
                 :autoplay="false"
-                @change="(current, last) => changeCarousel(row, current, last)"
+                @change="(current, last) => handleImageCarouselChange(row, current, last)"
               >
                 <el-carousel-item v-for="(imgItem, index) in row.main_image" :key="imgItem">
                   <el-image
@@ -241,18 +241,21 @@
           <el-table-column align="center" label="规格型号" min-width="125">
             <template #default="{ row }">
               <div class="shopTable-cell">
-                <el-image
-                  class="shopTable-cell-img"
-                  :src="row.attributes[row.attributeCurrent]?.selectorCurrentImg"
-                  fit="cover"
+                <el-image v-if="row.attributes[row.attributeCurrent]?.images?.length"
+                          class="shopTable-cell-img"
+                          :src="row.attributes[row.attributeCurrent]?.selectorCurrentImg"
+                          fit="cover"
                 />
-                <div v-for="attributeItem in row.attributes" :key="attributeItem">
-                  <el-select
-                    v-if="attributeItem?.options?.length"
-                    :value="attributeItem.selectorCurrent"
-                    placeholder="Select"
-                    size="large"
-                    style="width: 240px"
+                <div v-else>
+                  {{ "暂无规格" }}
+                </div>
+                <div v-for="(attributeItem, attributeIndex) in row.attributes" :key="attributeItem">
+                  <el-select v-if="attributeItem?.images?.length"
+                             v-model="attributeItem.selectorCurrent"
+                             placeholder="Select"
+                             size="small"
+                             class="shopTable-cell-select"
+                             @change="(value) => handleAttributeSelectChange(row, attributeIndex, value)"
                   >
                     <el-option
                       v-for="attributeItemOptionItem in attributeItem?.options"
@@ -331,10 +334,24 @@
           </el-table-column>
           <!--操作-->
           <el-table-column align="center" label="操作" min-width="150">
-            <!--            <template #default="{ row }">-->
-            <!--              <div>上架</div>-->
-            <!--              <div>下架</div>-->
-            <!--            </template>-->
+            <template #default="{ row }">
+              <div class="shopTable-cell-oper">
+                <div class="shopTable-cell-oper-row">
+                  <el-button type="success"
+                             round
+                             @click="() => handleBtnAvailable(row)"
+                  >上架
+                  </el-button>
+                </div>
+                <div class="shopTable-cell-oper-row">
+                  <el-button type="warning"
+                             round
+                             @click="() => handleBtnRemove(row)"
+                  >下架
+                  </el-button>
+                </div>
+              </div>
+            </template>
           </el-table-column>
         </el-table>
         <el-divider content-position="right">
@@ -355,7 +372,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import {reactive, ref} from 'vue'
 import YuLayout from '@/components/YuLayout/index'
 
 const tableRef = ref( null )
@@ -446,7 +463,6 @@ const getShopList = () => {
   shopObj.list = []
   shopObj.pageList = []
   shopObj.current = ''
-  // console.log( tableRef, 'aaaaaaa' )
   // tableRef.value.bodyWrapper.scrollTop = 0
   // 获取数据
   listLoading.value = true
@@ -455,8 +471,8 @@ const getShopList = () => {
     if ( item?.attributes?.length ) {
       item.attributeCurrent = 0
       item?.attributes?.forEach( attributeItem => {
-        if ( attributeItem?.name && attributeItem?.options?.length ) {
-          attributeItem.selectorCurrent = 0
+        if (attributeItem?.name && attributeItem?.images?.length) {
+          attributeItem.selectorCurrent = attributeItem?.options[0]
           attributeItem.selectorCurrentImg = attributeItem?.images?.length ? attributeItem?.images[0] : ''
         }
       } )
@@ -475,8 +491,17 @@ const changeCategory = () => {
   pageObj.current = 1
   getShopList()
 }
-const changeCarousel = ( row, current, last ) => {
+const handleImageCarouselChange = (row, current, last) => {
   row.mainImageCurrent = +current || 0
+}
+const handleAttributeSelectChange = (row, selectIndex, value) => {
+  row.attributeCurrent = +selectIndex || 0
+  const attributeItem = row.attributes[row.attributeCurrent]
+  const tempIndex = attributeItem?.options?.findIndex(option => option === value)
+  attributeItem.selectorCurrentImg = ''
+  if (tempIndex > -1 && attributeItem?.images?.length) {
+    attributeItem.selectorCurrentImg = attributeItem?.images[tempIndex]
+  }
 }
 const handleSizeChange = val => {
   pageObj.size = val
@@ -485,6 +510,12 @@ const handleSizeChange = val => {
 }
 const handleCurrentChange = val => {
   getShopList()
+}
+const handleBtnAvailable = (row) => {
+  console.log(row, '上架')
+}
+const handleBtnRemove = (row) => {
+  console.log(row, '下架')
 }
 // 获取评分
 const getRate = commentInfo => {
@@ -560,6 +591,25 @@ defineOptions( {
       &-img {
         height: 100px;
         object-fit: contain;
+      }
+
+      &-select {
+        width: 100%;
+      }
+
+      &-oper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        &-row {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 10px;
+        }
       }
     }
   }
