@@ -40,7 +40,7 @@ const initApp = async() => {
   useSvgIcon( app )
   registerStore( app )
   registerDirective( app )
-  await router.isReady()
+  router.isReady()
 
   setupI18n( app )
   setupElementIcons( app )
