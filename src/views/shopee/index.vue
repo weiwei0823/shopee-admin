@@ -3,8 +3,7 @@
     <template #body>
       <div class="shopee">
         <!--筛选区域-->
-        <el-divider class="shopee-condition" content-position="left">
-          <span class="shopee-condition-title">筛选区域</span>
+        <div class="shopee-condition">
           <!--国家-->
           <el-select-v2
             v-model="countryObj.current"
@@ -21,7 +20,21 @@
             style="width: 240px"
             @change="changeCategory"
           />
-        </el-divider>
+          <!--汇率-->
+          <el-select
+            v-model="rateObj.current"
+            placeholder="选择兑换货币"
+            style="width: 240px"
+            clearable
+            @change="changeRate"
+          >
+            <template #label="{ value }">
+              <span>{{ '100RMB' }} = </span>
+              <span style="font-weight: bold">{{ value }}</span>
+            </template>
+            <el-option v-for="item in rateObj.list" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </div>
         <div class="flex flex-wrap gap-4 items-center"></div>
         <el-divider content-position="right">
           <el-pagination
@@ -366,7 +379,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, onBeforeMount } from 'vue'
 import YuLayout from '@/components/YuLayout/index'
 
 const tableRef = ref( null )
@@ -414,6 +427,21 @@ const pageObj = reactive( {
   size : 20
 } )
 
+// 汇率配置
+const rateObj = reactive( {
+  list : [
+    'PHP', // 菲律宾
+    'MYR', // 马来西亚
+    'THB' // 泰铢
+  ],
+  current : 'PHP'
+} )
+
+// 获取汇率列表
+const getRateList = () => {
+  // todo
+  // requuest(`https://60s.viki.moe/ex-rates?c=${rateObj?.current}`)
+}
 // 获取商品类别列表
 const getCategoryList = () => {
   categoryObj.list = []
@@ -485,6 +513,7 @@ const changeCategory = () => {
   pageObj.current = 1
   getShopList()
 }
+const changeRate = () => {}
 const handleImageCarouselChange = ( row, current, last ) => {
   row.mainImageCurrent = +current || 0
 }
@@ -543,9 +572,14 @@ const getDate = dateTime => {
     tempDate.getHours()
   )}:${getDateNum( tempDate.getMinutes() )}:${getDateNum( tempDate.getSeconds() )}`
 }
-getCategoryList()
+
 defineOptions( {
   name : 'shopee'
+} )
+
+onBeforeMount( () => {
+  getCategoryList()
+  getRateList()
 } )
 </script>
 
@@ -558,6 +592,10 @@ defineOptions( {
   }
 
   &-condition {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
     &-title {
       margin-right: 20px;
     }

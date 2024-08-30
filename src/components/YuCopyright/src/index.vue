@@ -18,14 +18,14 @@
 import SvgIcon from '@/components/YuSvgIcon'
 import { ref, onBeforeMount } from 'vue'
 
-const currentYear = ref(2021)
-onBeforeMount(() => {
+const currentYear = ref( 2021 )
+onBeforeMount( () => {
   currentYear.value = new Date().getFullYear()
-})
+} )
 
-defineOptions({
-  name: 'YuCopyright',
-})
+defineOptions( {
+  name : 'YuCopyright'
+} )
 </script>
 
 <style lang="scss" scoped>
