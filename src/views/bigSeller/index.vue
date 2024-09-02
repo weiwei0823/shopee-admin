@@ -380,12 +380,11 @@
 
 <script setup lang="ts">
 import { onBeforeMount } from 'vue'
-import http from '@/utils/request.js'
+import bigsellerRequest from '@/utils/bigsellerRequest'
 
 const getDraftBoxList = function() {
   http.request( {
-    method : 'get',
-    p
+    method : 'get'
   } )
 }
 
