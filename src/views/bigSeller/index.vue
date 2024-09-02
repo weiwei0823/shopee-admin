@@ -1,7 +1,7 @@
 <template>
-  <yu-layout title="虾皮" class="shopee-container">
+  <yu-layout title="BigSeller" class="bigSeller-container">
     <template #body>
-      <div class="shopee">
+      <div class="bigSeller">
         <!--筛选区域-->
         <div class="shopee-condition">
           <!--国家-->
@@ -352,10 +352,10 @@
             <template #default="{ row }">
               <div class="shopTable-cell-oper">
                 <div class="shopTable-cell-oper-row">
-                  <el-button type="success" round @click="() => handleBtnAvailable(row)">上架 </el-button>
+                  <el-button type="success" round @click="() => handleBtnAvailable(row)">上架</el-button>
                 </div>
                 <div class="shopTable-cell-oper-row">
-                  <el-button type="warning" round @click="() => handleBtnRemove(row)">下架 </el-button>
+                  <el-button type="warning" round @click="() => handleBtnRemove(row)">下架</el-button>
                 </div>
               </div>
             </template>
@@ -379,286 +379,19 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onBeforeMount } from 'vue'
-import YuLayout from '@/components/YuLayout/index.js'
+import { onBeforeMount } from 'vue'
+import http from '@/utils/request.js'
 
-const tableRef = ref( null )
-
-const listLoading = ref( true )
-// 国家
-const countryObj = reactive( {
-  list : [
-    {
-      value : 'my',
-      label : '马来西亚'
-    },
-    {
-      value : 'ph',
-      label : '菲律宾'
-    },
-    {
-      value : 'vn',
-      label : '越南'
-    },
-    {
-      value : 'cl',
-      label : '智利'
-    }
-  ],
-  current : 'my'
-} )
-
-// 商品分类
-const categoryObj = reactive( {
-  list : [],
-  current : ''
-} )
-// 店铺列表
-const shopObj = reactive( {
-  all : {}, // 当前国家下的所有category对应的shop列表
-  list : [],
-  pageList : [],
-  current : ''
-} )
-
-// 页码配置
-const pageObj = reactive( {
-  current : 1,
-  size : 20
-} )
-
-// 汇率配置
-const rateObj = reactive( {
-  list : [
-    'PHP', // 菲律宾
-    'MYR', // 马来西亚
-    'THB' // 泰铢
-  ],
-  current : 'PHP'
-} )
-
-// 获取汇率列表
-const getRateList = () => {
-  // todo
-  // requuest(`https://60s.viki.moe/ex-rates?c=${rateObj?.current}`)
-}
-// 获取商品类别列表
-const getCategoryList = () => {
-  categoryObj.list = []
-  categoryObj.current = ''
-  listLoading.value = true
-  let modulesFiles = []
-  switch ( countryObj.current ) {
-    case 'cl':
-      modulesFiles = import.meta.glob( `@/datas/polymerization_products/products_cl/*.json`, { eager : true } )
-      break
-    case 'my':
-      modulesFiles = import.meta.glob( `@/datas/polymerization_products/products_my/*.json`, { eager : true } )
-      break
-    case 'ph':
-      modulesFiles = import.meta.glob( `@/datas/polymerization_products/products_ph/*.json`, { eager : true } )
-      break
-    case 'vn':
-      modulesFiles = import.meta.glob( `@/datas/polymerization_products/products_vn/*.json`, { eager : true } )
-      break
-    default:
-      return
-  }
-  // 获取商品分类信息
-  Object.keys( modulesFiles ).forEach( keyItem => {
-    const tempStr = RegExp( `(?<=products_${countryObj.current}\/).+?(?=\\.json)` ).exec( keyItem )[0]
-    categoryObj.list.push( {
-      value : tempStr,
-      label : tempStr,
-      originalKey : keyItem
-    } )
-    shopObj.all[tempStr] = modulesFiles[keyItem]?.default || []
+const getDraftBoxList = function() {
+  http.request( {
+    method : 'get',
+    p
   } )
-  categoryObj.current = categoryObj.list[0]?.value
-  getShopList()
-  listLoading.value = false
 }
-
-// 获取商品类别列表
-const getShopList = () => {
-  // 初始化
-  shopObj.list = []
-  shopObj.pageList = []
-  shopObj.current = ''
-  // tableRef.value.bodyWrapper.scrollTop = 0
-  // 获取数据
-  listLoading.value = true
-  shopObj.list = shopObj.all[categoryObj.current]?.map( item => {
-    item.mainImageCurrent = 0 // 图片下标
-    if ( item?.attributes?.length ) {
-      item.attributeCurrent = 0
-      item?.attributes?.forEach( attributeItem => {
-        if ( attributeItem?.name && attributeItem?.images?.length ) {
-          attributeItem.selectorCurrent = attributeItem?.options[0]
-          attributeItem.selectorCurrentImg = attributeItem?.images?.length ? attributeItem?.images[0] : ''
-        }
-      } )
-    }
-    return item
-  } )
-  shopObj.pageList = shopObj.list?.slice( ( pageObj?.current - 1 ) * pageObj?.size, pageObj?.current * pageObj?.size )
-  listLoading.value = false
-}
-
-const changeCountry = () => {
-  shopObj.all = {}
-  getCategoryList()
-}
-const changeCategory = () => {
-  pageObj.current = 1
-  getShopList()
-}
-const changeRate = () => {}
-const handleImageCarouselChange = ( row, current, last ) => {
-  row.mainImageCurrent = +current || 0
-}
-const handleAttributeSelectChange = ( row, selectIndex, value ) => {
-  row.attributeCurrent = +selectIndex || 0
-  const attributeItem = row.attributes[row.attributeCurrent]
-  const tempIndex = attributeItem?.options?.findIndex( option => option === value )
-  attributeItem.selectorCurrentImg = ''
-  if ( tempIndex > -1 && attributeItem?.images?.length ) {
-    attributeItem.selectorCurrentImg = attributeItem?.images[tempIndex]
-  }
-}
-const handleSizeChange = val => {
-  pageObj.size = val
-  pageObj.current = 1
-  getShopList()
-}
-const handleCurrentChange = val => {
-  getShopList()
-}
-const handleBtnAvailable = row => {
-  console.log( row, '上架' )
-}
-const handleBtnRemove = row => {
-  console.log( row, '下架' )
-}
-// 获取评分
-const getRate = commentInfo => {
-  if ( +commentInfo?.comment_count ) {
-    return (
-      Math.round(
-        ( 100 *
-          ( ( +commentInfo?.one_star_count || 0 ) +
-            ( +commentInfo?.two_star_count || 0 ) * 2 +
-            ( +commentInfo?.three_star_count || 0 ) * 3 +
-            ( +commentInfo?.four_star_count || 0 ) * 4 +
-            ( +commentInfo?.five_star_count || 0 ) * 5 ) ) /
-          +commentInfo?.comment_count
-      ) / 100
-    )
-  } else {
-    return 0
-  }
-}
-const getDateNum = num => {
-  if ( +num >= 10 ) {
-    return `${num}`
-  } else if ( +num >= 0 ) {
-    return `0${num}`
-  }
-}
-// 获取日期
-const getDate = dateTime => {
-  const tempDate = new Date( dateTime * 1000 )
-  return `${tempDate.getFullYear()}/${getDateNum( tempDate.getMonth() )}/${getDateNum( tempDate.getDate() )} ${getDateNum(
-    tempDate.getHours()
-  )}:${getDateNum( tempDate.getMinutes() )}:${getDateNum( tempDate.getSeconds() )}`
-}
-
-defineOptions( {
-  name : 'shopee'
-} )
 
 onBeforeMount( () => {
-  getCategoryList()
-  getRateList()
+  getDraftBoxList()
 } )
 </script>
 
-<style lang="scss" scoped>
-.shopee {
-  &-container {
-    ::v-deep .header {
-      display: none;
-    }
-  }
-
-  &-condition {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-
-    &-title {
-      margin-right: 20px;
-    }
-  }
-  .shopTable {
-    width: 100%;
-
-    &-cell {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      &-name {
-        overflow: auto !important;
-        text-overflow: initial !important;
-        white-space: pre-wrap !important;
-      }
-
-      &-price {
-        font-size: 16px;
-        font-weight: bolder;
-        color: #101010;
-      }
-
-      &-img {
-        height: 100px;
-        object-fit: contain;
-      }
-
-      &-select {
-        width: 100%;
-      }
-
-      &-oper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        &-row {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top: 10px;
-        }
-      }
-    }
-  }
-}
-
-::v-deep {
-  .shopTable-tooltip-title {
-    font-weight: bolder;
-    color: #4dd9d5;
-    margin-right: 5px;
-  }
-}
-
-::v-deep {
-  .shopTable-cell-carousel-img {
-    height: 100px;
-    object-fit: contain;
-  }
-}
-</style>
+<style lang="scss" scoped></style>
