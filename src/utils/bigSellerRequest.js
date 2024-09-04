@@ -4,7 +4,7 @@ import { getEnvs } from './envs'
 import cookies from '@/utils/cookies'
 import router from '@/router'
 import { useUserStore } from '@/store'
-import bigSellerToken from "../../bigSellerToken.json";
+import bigSellerToken from '../../bigSellerToken.json'
 
 import { GLOBAL_DATA, LOGIN_ERROR_CODE, TOKEN, WHITE_CODE_LIST } from '@/config/constant'
 

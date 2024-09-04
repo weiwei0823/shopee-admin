@@ -1,8 +1,6 @@
 <template>
   <yu-layout title="BigSeller" class="bigSeller-container">
-    <template #body>
-      11111
-    </template>
+    <template #body> 11111 </template>
   </yu-layout>
 </template>
 
