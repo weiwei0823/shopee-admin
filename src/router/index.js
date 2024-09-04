@@ -4,6 +4,7 @@ import Layout from '@/layout/index.vue'
 import nested from './modules/nested'
 import customComponents from './modules/customComponents'
 import logoShopee from '@/assets/shopee/logo.jpg'
+import logoBigSeller from '@/assets/bigSeller/logo.ico'
 
 // 配置路由信息
 export const constantRoutes = [
@@ -101,6 +102,22 @@ export const asyncRoutes = [
         component : () => import( '@/views/shopee/index.vue' ),
         name : 'shopee',
         meta : { title : '虾皮', img : logoShopee, noCache : true }
+      }
+    ]
+  },
+  {
+    path : '/bigSeller',
+    name : 'bigSeller',
+    component : Layout,
+    meta : {
+      title : 'bigSeller'
+    },
+    children : [
+      {
+        path : 'index',
+        component : () => import( '@/views/bigSeller/index.vue' ),
+        name : 'bigSeller',
+        meta : { title : 'bigSeller', img : logoBigSeller, noCache : true }
       }
     ]
   },
