@@ -24,7 +24,7 @@ class BigSellerHttpRequest {
 
   getConfig() {
     return {
-      baseURL : './',
+      baseURL : 'https://www.bigseller.com/api/v1',
       timeout : this.timeout,
       withCredentials : this.withCredentials,
       headers : {
