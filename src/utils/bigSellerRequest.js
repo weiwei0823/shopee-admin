@@ -1,19 +1,17 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { getEnvs } from './envs'
-import cookies from '@/utils/cookies'
 import router from '@/router'
 import { useUserStore } from '@/store'
-import bigSellerToken from '../../bigSellerToken.json'
 
-import { GLOBAL_DATA, LOGIN_ERROR_CODE, TOKEN, WHITE_CODE_LIST } from '@/config/constant'
+import { GLOBAL_DATA, LOGIN_ERROR_CODE, WHITE_CODE_LIST } from '@/config/constant'
 
 // import qs from 'qs'
 class BigSellerHttpRequest {
   // #baseUrl
   constructor() {
     this.baseUrl = this.getBaseUrl()
-    this.withCredentials = false
+    this.withCredentials = true
     this.timeout = 60 * 60 * 24 * 1000
   }
 
@@ -24,12 +22,15 @@ class BigSellerHttpRequest {
 
   getConfig() {
     return {
-      baseURL : 'https://www.bigseller.com/api/v1',
+      baseURL : 'http://127.0.0.1:9980/',
       timeout : this.timeout,
       withCredentials : this.withCredentials,
       headers : {
-        'Content-Type' : 'application/json;charset=UTF-8'
-      }
+        'Content-Type' : 'application/json;charset=UTF-8',
+        'Accept' : '/',
+        'Cache-Control' : 'no-cache',
+      },
+      credentials : 'same-origin'
     }
   }
 
@@ -104,66 +105,15 @@ class BigSellerHttpRequest {
           } )
           return Promise.reject( new Error( '请检查您的网络是否正常' ) )
         }
-        const token = cookies.get( bigSellerToken )
-        if ( token ) {
-          config.headers.Authorization = token
-        }
+        // const token = cookies.get( bigSellerToken )
+        // if ( token ) {
+        //   config.headers.Authorization = token
+        // }
         // config.data = qs.stringify( config.data )
-
         return config
       },
       error => {
         return Promise.reject( new Error( error ) )
-      }
-    )
-
-    // 响应拦截
-    instance.interceptors.response.use(
-      res => {
-        const result = res.data
-        const type = Object.prototype.toString.call( result )
-
-        // const $config = res.config
-
-        // 如果是文件流 直接返回
-        if ( type === '[object Blob]' || type === '[object ArrayBuffer]' ) {
-          return result
-        } else {
-          const { code, message } = result
-          const isErrorToken = LOGIN_ERROR_CODE.find( item => item.code == code )
-          const isWhiteCode = WHITE_CODE_LIST.find( item => item.code == code )
-
-          const userStore = useUserStore()
-
-          if ( isErrorToken ) {
-            userStore.LOGIN_OUT()
-            router.push( '/login' )
-            window.location.reload()
-          } else if ( !isWhiteCode ) {
-            ElMessage( {
-              message : message || 'Error',
-              type : 'error',
-              duration : 3 * 1000
-            } )
-            return Promise.reject( new Error( message || 'Error' ) )
-          } else {
-            return result
-          }
-        }
-
-        return result
-      },
-      error => {
-        if ( error && error.response ) {
-          error.message = that.checkStatus( error.response.status )
-        }
-        const isTimeout = error.message.includes( 'timeout' )
-        ElMessage( {
-          message : isTimeout ? '网络请求超时' : error.message || '连接到服务器失败',
-          type : 'error',
-          duration : 2 * 1000
-        } )
-        return Promise.reject( new Error( error.message ) )
       }
     )
   }
