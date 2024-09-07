@@ -17,25 +17,25 @@
 <script>
 import { defineComponent, ref } from 'vue'
 
-export default defineComponent( {
-  name : 'YuLayout',
-  props : {
-    title : {
-      type : String,
-      default : ''
+export default defineComponent({
+  name: 'YuLayout',
+  props: {
+    title: {
+      type: String,
+      default: '',
     },
-    subtitle : {
-      type : String,
-      default : ''
-    }
+    subtitle: {
+      type: String,
+      default: '',
+    },
   },
   setup() {
     const wrapperRef = ref()
     return {
-      wrapperRef
+      wrapperRef,
     }
-  }
-} )
+  },
+})
 </script>
 
 <style lang="scss" scoped>
