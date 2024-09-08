@@ -3,18 +3,20 @@ import variables from '@/styles/element-variables.scss?inline'
 import { localStorageHandle } from '@/utils/storage'
 import defaultSettings from '@/settings'
 
-const { showSettings, tagsView, fixedHeader, sidebarLogo } = defaultSettings
+const { showSettings, tagsView, navBar, fixedHeader, sidebarLogo } = defaultSettings
 
 const useSettingsStore = defineStore( {
   id : 'settings',
   state : () => {
     const localTagsView = localStorageHandle.getItem( 'tagsView' )
+    const localNavBar = localStorageHandle.getItem( 'navBar' )
     const localFixedHeader = localStorageHandle.getItem( 'fixedHeader' )
     const localSidebarLogo = localStorageHandle.getItem( 'sidebarLogo' )
     return {
       theme : variables.theme,
       showSettings,
       tagsView : localTagsView ? !!+localTagsView : tagsView,
+      navBar : localNavBar ? !!+localNavBar : navBar,
       fixedHeader : localFixedHeader ? !!+localFixedHeader : fixedHeader,
       sidebarLogo : localSidebarLogo ? !!+localSidebarLogo : sidebarLogo,
       layoutMod : localStorageHandle.getItem( 'layoutMod' ) == 'horizontal' ? 'horizontal' : 'vertical'

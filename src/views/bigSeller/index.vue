@@ -7,25 +7,11 @@
               border
               fit
               highlight-current-row
+              stripe
               class="bigSellerTable"
     >
-      <!--图片-->
-      <el-table-column align="center" label="图片" min-width="80">
-        <template #default="{ row }">
-          <el-image class="bigSeller-cell-image"
-                    :src="row.image"
-                    fit="cover"
-                    lazy
-                    :zoom-rate="1.2"
-                    :max-scale="7"
-                    :min-scale="0.2"
-                    :preview-src-list="[row.image]"
-                    :initial-index="0"
-                    :z-index="999"
-                    :preview-teleported="true"
-          />
-        </template>
-      </el-table-column>
+      <!--选择框-->
+      <el-table-column type="selection" width="55"/>
       <!--商品名称-->
       <el-table-column align="center" label="商品名称" min-width="150" fixed>
         <template #default="{ row }">
@@ -91,16 +77,53 @@
           </el-tooltip>
         </template>
       </el-table-column>
+      <!--图片-->
+      <el-table-column align="center" label="图片" min-width="80">
+        <template #default="{ row }">
+          <el-image class="bigSeller-cell-image"
+                    :src="row.image"
+                    fit="cover"
+                    lazy
+                    :zoom-rate="1.2"
+                    :max-scale="7"
+                    :min-scale="0.2"
+                    :preview-src-list="[row.image]"
+                    :initial-index="0"
+                    :z-index="999"
+                    :preview-teleported="true"
+                    :hide-on-click-modal="true"
+          />
+        </template>
+      </el-table-column>
+      <!--操作按钮-->
+      <el-table-column fixed="right" label="操作" min-width="80">
+        <template #default="{ row }">
+          <el-button link type="primary" size="small" @click="(e) => handleGoodsEdit(e, row)">
+            修改
+          </el-button>
+          <el-button link type="primary" size="small" @click="(e) => handleGoodsOnSale(e, row)">
+            上架
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
 
 <script setup lang="ts">
-import {onBeforeMount, ref} from 'vue'
-import {getBigSellerDraftBox} from '@/api/bigSeller'
+import { onBeforeMount, ref } from 'vue'
+import { getBigSellerDraftBox } from '@/api/bigSeller'
 
 const draftList = ref( [] )
 const draftListLoading = ref( false )
+
+const handleGoodsEdit = function( event, res ) {
+  console.log( event, res, 'handleGoodsEdit-------------' )
+}
+
+const handleGoodsOnSale = function( event, res ) {
+  console.log( event, res, 'handleGoodsOnSale-------------' )
+}
 
 onBeforeMount( () => {
   draftListLoading.value = true

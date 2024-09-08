@@ -10,7 +10,7 @@
 
       <div class="main-container" :class="{ hasTagsView: set.needTagsView }">
         <div :class="{ 'fixed-header': set.fixedHeader }">
-          <NavBar :class="set.layoutMod === 'vertical' ? '' : 'sidebar-container horizontal'" />
+          <NavBar v-if="set.needNavBar" :class="set.layoutMod === 'vertical' ? '' : 'sidebar-container horizontal'" />
           <TagsView v-if="set.needTagsView" />
         </div>
         <AppMain :need-tags-view="set.needTagsView" />
@@ -47,6 +47,9 @@ const set = reactive( {
   } ),
   needTagsView : computed( () => {
     return settingsStore.tagsView
+  } ),
+  needNavBar : computed( () => {
+    return settingsStore.bavBar
   } ),
   fixedHeader : computed( () => {
     return settingsStore.fixedHeader

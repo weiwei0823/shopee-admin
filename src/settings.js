@@ -1,7 +1,8 @@
 const defaultSetting = {
   title : 'Vite Element Admin',
   showSettings : true,
-  tagsView : true,
+  tagsView : false,
+  navBar : false,
   fixedHeader : true,
   sidebarLogo : true
 }
