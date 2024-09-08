@@ -8,8 +8,7 @@
       />
       <SideBar class="sidebar-container vertical" v-if="set.layoutMod === 'vertical'" />
 
-      <div class="main-container"
-           :class="{ hasTagsView: set.needTagsView}">
+      <div class="main-container" :class="{ hasTagsView: set.needTagsView }">
         <div :class="{ 'fixed-header': set.fixedHeader }">
           <NavBar v-if="set.needNavBar" :class="set.layoutMod === 'vertical' ? '' : 'sidebar-container horizontal'" />
           <TagsView v-if="set.needTagsView" />

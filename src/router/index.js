@@ -93,6 +93,7 @@ export const asyncRoutes = [
     path : '/shopee',
     name : 'shopee',
     component : Layout,
+    redirect : '/shopee/index',
     meta : {
       title : 'shopee'
     },
@@ -109,6 +110,7 @@ export const asyncRoutes = [
     path : '/bigSeller',
     name : 'bigSeller',
     component : Layout,
+    redirect : '/bigSeller/index',
     meta : {
       title : 'bigSeller'
     },
