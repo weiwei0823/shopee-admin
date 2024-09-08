@@ -8,7 +8,8 @@
       />
       <SideBar class="sidebar-container vertical" v-if="set.layoutMod === 'vertical'" />
 
-      <div class="main-container" :class="{ hasTagsView: set.needTagsView }">
+      <div class="main-container"
+           :class="{ hasTagsView: set.needTagsView}">
         <div :class="{ 'fixed-header': set.fixedHeader }">
           <NavBar v-if="set.needNavBar" :class="set.layoutMod === 'vertical' ? '' : 'sidebar-container horizontal'" />
           <TagsView v-if="set.needTagsView" />
@@ -21,9 +22,9 @@
 </template>
 
 <script setup>
-import { ref, unref, reactive, computed, watch, watchEffect, onMounted, onBeforeMount } from 'vue'
+import { computed, onBeforeMount, onMounted, reactive, ref, unref, watch, watchEffect } from 'vue'
 
-import { NavBar, AppMain, SideBar, TagsView, Settings } from './components'
+import { AppMain, NavBar, Settings, SideBar, TagsView } from './components'
 import { toggleClass } from '@/utils/el'
 import { useEventListener } from '@vueuse/core'
 

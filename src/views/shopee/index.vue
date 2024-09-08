@@ -379,7 +379,7 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeMount, reactive, ref} from 'vue'
+import { onBeforeMount, reactive, ref } from 'vue'
 import YuLayout from '@/components/YuLayout/index.js'
 
 const tableRef = ref( null )

@@ -27,8 +27,8 @@ class BigSellerHttpRequest {
       withCredentials : this.withCredentials,
       headers : {
         'Content-Type' : 'application/json;charset=UTF-8',
-        'Accept' : '/',
-        'Cache-Control' : 'no-cache',
+        Accept : '/',
+        'Cache-Control' : 'no-cache'
       },
       credentials : 'same-origin'
     }

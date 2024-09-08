@@ -33,11 +33,11 @@ const props = defineProps( {
   }
 } )
 
-const height = ref( 'calc( 100vh - 84px)' )
+const height = ref( 'calc( 100vh )' )
 watch(
   () => props.needTagsView,
   () => {
-    height.value = props.needTagsView ? 'calc( 100vh - 84px )' : 'calc( 100vh - 50px )'
+    height.value = props.needTagsView ? 'calc( 100vh - 84px )' : 'calc( 100vh )'
   },
   {
     immediate : true
@@ -51,19 +51,21 @@ defineOptions( {
 
 <style lang="scss" scoped>
 .app-main {
-  min-height: calc(100vh - 50px);
+  min-height: 100vh;
   width: 100%;
   position: relative;
   overflow: hidden;
   background: #f0f2f5;
 }
 .fixed-header + .app-main {
-  padding-top: 50px;
+  padding-top: 0;
 }
-.hasTagsView {
+
+.hasNavBar {
   .app-main {
     min-height: calc(100vh - 84px);
   }
+
   .fixed-header + .app-main {
     padding-top: 84px;
   }
