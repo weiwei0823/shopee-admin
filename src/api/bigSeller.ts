@@ -26,3 +26,40 @@ export function getBigSellerDraftBox( params ) {
     }
   } )
 }
+
+export function getBigSellerOnLineProduct( params ) {
+  return httpBigSeller.request( {
+    method : 'get',
+    url : '/getBigSellerOnLineProduct',
+    data : {
+      bsStatus : 4,
+      shopId : '',
+      pageNo : 1,
+      pageSize : 50,
+      inquireType : 0,
+      searchType : '',
+      searchContent : '',
+      ...params
+    }
+  } )
+}
+
+export function getBigSellerCollectList( params ) {
+  return httpBigSeller.request( {
+    method : 'get',
+    url : '/getBigSellerCollectList',
+    data : {
+      claimStatus : 0,
+      crawlPlatform : '',
+      desc : true,
+      orderBy : '',
+      pageNo : 1,
+      pageSize : 50,
+      inquireType : 0,
+      searchType : '',
+      searchContent : '',
+      site : '',
+      ...params
+    }
+  } )
+}
