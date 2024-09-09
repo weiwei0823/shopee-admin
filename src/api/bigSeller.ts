@@ -12,7 +12,7 @@ export function getBigSellerUserList( params ) {
 
 export function getBigSellerDraftBox( params ) {
   return httpBigSeller.request( {
-    method : 'get',
+    method : 'post',
     url : '/getBigSellerDraftBox',
     data : {
       bsStatus : 1,
@@ -29,7 +29,7 @@ export function getBigSellerDraftBox( params ) {
 
 export function getBigSellerOnLineProduct( params ) {
   return httpBigSeller.request( {
-    method : 'get',
+    method : 'post',
     url : '/getBigSellerOnLineProduct',
     data : {
       bsStatus : 4,
@@ -46,7 +46,7 @@ export function getBigSellerOnLineProduct( params ) {
 
 export function getBigSellerCollectList( params ) {
   return httpBigSeller.request( {
-    method : 'get',
+    method : 'post',
     url : '/getBigSellerCollectList',
     data : {
       claimStatus : 0,
@@ -56,7 +56,7 @@ export function getBigSellerCollectList( params ) {
       pageNo : 1,
       pageSize : 50,
       inquireType : 0,
-      searchType : '',
+      searchType : 'productName',
       searchContent : '',
       site : '',
       ...params
